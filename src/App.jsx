@@ -117,15 +117,21 @@ const App = () => {
 
   }
 
-  const handleRemoveFighter = (deadFighter) => {
+  const handleRemoveFighter = (fighterToRemove) => {
 
-    const newSquad = zombieSquad.filter((fighter) => fighter.id !== deadFighter.id)
-    console.log(zombieSquad)
+    const newSquad = zombieSquad.filter((fighter) => fighter.id !== fighterToRemove.id)
+    setZombieSquad(newSquad);
+    console.log(newSquad)
 
-    setFightersArray(originalFighters => originalFighters.filter(fighter => fighter.id === deadFighter.id)
-    )
+    setFightersArray(originalFighters => {
+      const alreadyExists = originalFighters.some(f => f.id === fighterToRemove.id);
+      if (!alreadyExists) {
+        return [...originalFighters, fighterToRemove]; // How to append it to the original array using the spread operator
+      }
+      return originalFighters;
+    }) 
 
-    setMoney(originalBalance => originalBalance + deadFighter.price)
+    setMoney(originalBalance => originalBalance + fighterToRemove.price)
     setMessage('')
 
   }
@@ -148,7 +154,7 @@ const App = () => {
               <p>Price: ${squadFighter.price}</p>
               <p>Strength: {squadFighter.strength}</p>
               <p>Agility: {squadFighter.agility}</p>
-              <button onClick={() => handleRemoveFighter(fighter)}>Kill </button>
+              <button onClick={() => handleRemoveFighter(squadFighter)}>Kill </button>
             </li>
           ))}
         </ul>
@@ -184,3 +190,5 @@ export default App
 // Allows you to reduce the array to a single value or sum in this case
 
 // totalStrength doesn't need to be a state variable because it doesn't need to trigger a re-render (the set arrays state variables already do that so the total strength is just calculated based on the updated array). I think you could also do this with the money variable, too.
+
+// some() checks if at least one item in the array matches a condition (it returns a boolean)
